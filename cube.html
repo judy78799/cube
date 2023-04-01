@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="./p5.min.js"></script>
+    <title>Document</title>
+</head>
+<body>
+    <div class="controller">
+        <div>
+            W : <input type="range" name="width" value="120" step="10" min="10" max="250"><br/>
+            H : <input type="range" name="height" value="120" step="10" min="10" max="250"><br/>
+            D : <input type="range" name="depth" value="120" step="10" min="10" max="250"><br/>
+        </div>
+        <div>
+            <button type="button" id="rotate">회전</button>
+            <button type="button" id="stop">멈춤</button>
+        </div>
+    </div>
+    <script>
+        var size = [];
+var sizeName = ["width", "height", "depth"];
+var img;
+var rotate = true;
+var rotateValue = 1;
+
+
+window.onload = function(){
+    sizeName.forEach(function(s, i){
+        size[i] = document.querySelector("input[name="+s+"]").value;
+        document.querySelector("input[name="+s+"]").addEventListener("change", function(){
+            size[i] = this.value;
+        });
+    });
+
+    document.getElementById("rotate").addEventListener("click", function(){
+        rotate = true;
+    });
+
+    document.getElementById("stop").addEventListener("click", function(){
+        rotate = false;
+    });
+}
+
+function preload(){
+    img = loadImage("image/ggome.jpg");
+}
+
+function setup(){
+    createCanvas(710, 400, WEBGL);
+    img.loadPixels();
+}
+
+function draw() {
+    //배경색상
+    background(50);
+
+    //질감
+    specularMaterial(183, 240, 177);
+
+    //빛
+    ambientLight(255, 255, 255);
+    directionalLight(50, 50, 50, -frameCount, -frameCount, -1);
+    noStroke();
+
+    //마우스 컨트롤 - z축은 고정(Scroll 방지)
+    orbitControl(1,1,0);    
+
+    //박스 생성 및 회전
+    push();
+    if(rotate){
+        rotateValue++;
+        if(rotateValue > 10000000){
+            rotateValue = 1;
+        }
+    }
+    rotateX(rotateValue * 0.01);
+    rotateY(rotateValue * 0.01);
+    texture(img);
+    box(size[0], size[1], size[2]);
+    pop();
+}
+    </script>
+</body>
+</html>
